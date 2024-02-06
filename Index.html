@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chat Room</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #chat-box {
+            width: 400px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        #message-input {
+            width: 400px;
+            margin: 0 auto;
+            display: flex;
+        }
+        #message {
+            flex: 1;
+            padding: 5px;
+        }
+        #send-btn {
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-box"></div>
+    <div id="message-input">
+        <input type="text" id="message" placeholder="Type your message">
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            if (message.trim() !== '') {
+                socket.emit('chat message', message);
+                document.getElementById('message').value = '';
+            }
+        }
+
+        socket.on('chat message', function (msg) {
+            const chatBox = document.getElementById('chat-box');
+            const newMessage = document.createElement('p');
+            newMessage.textContent = msg;
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>
